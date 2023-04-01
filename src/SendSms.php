@@ -40,8 +40,13 @@ class SendSms
     public function check( $phone,$sms_code ){
         $key = 'sms_'.$phone;
         $is_send = Cache::get($key);
-        if ( $is_send && $is_send==$sms_code ){
-            return true;
+        if ( $is_send ) {
+            $code = json_decode($is_send,true);
+            if ( $code && $code['code']==$sms_code ){
+                return true;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }
@@ -49,9 +54,7 @@ class SendSms
 
     //发短信
     public function sendSms( $phone,$data=[] ){
-
         $params = [];
-
         //配置是否已设置
         if ( !$this->checkConfig() ){
             return  $this->result;
